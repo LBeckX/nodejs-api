@@ -1,0 +1,11 @@
+{
+  "ext": "js,ts,json",
+  "watch": [
+    "src/**"
+  ],
+  "ignore": [
+    "src/**/*.spec.ts",
+    "node_module"
+  ],
+  "exec": "tsx --env-file=.env src/app.ts"
+}
