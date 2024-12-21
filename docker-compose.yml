@@ -1,0 +1,17 @@
+services:
+  database:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+volumes:
+  database_data:
