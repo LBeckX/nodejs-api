@@ -9,4 +9,4 @@ authRouter.post('/register/resend', AuthController.registerResend);
 authRouter.post('/password-reset', AuthController.passwordReset);
 authRouter.post('/password-reset/confirmation', AuthController.passwordResetConfirmation);
 
-export default authRouter
+export default authRouter;
