@@ -21,4 +21,12 @@ export class TokenService {
         token.value = value
         return await this.tokenRepository.save(token)
     }
+
+    static async getByToken(token: string) {
+        return await this.tokenRepository.findOne({where: {token}})
+    }
+
+    static async deleteByToken(token: string) {
+        return await this.tokenRepository.delete({token})
+    }
 }

@@ -23,7 +23,7 @@ export class AuthController {
         }
 
         try {
-            if (await User.getByEmail(registerDto.email)) {
+            if (await UserService.getByEmail(registerDto.email)) {
                 return res.status(409).send({message: 'Email already in use'})
             }
         } catch (e) {
@@ -62,7 +62,44 @@ export class AuthController {
     }
 
     static async registerConfirmation(req: express.Request, res: express.Response) {
-        res.send('registerConfirmation')
+        let token: Token
+        try {
+            token = await TokenService.getByToken(req.query.token as string)
+            if (!token) {
+                return res.status(404).send({message: 'Token not found'})
+            }
+        } catch (e) {
+            return res.status(500).send({message: 'Could not check email'})
+        }
+
+        let user: User
+        try {
+            user = await UserService.getById(parseInt(token.value))
+            if (!user) {
+                return res.status(404).send({message: 'User not found'})
+            }
+
+            if (user.confirmed) {
+                return res.status(409).send({message: 'User already confirmed'})
+            }
+        } catch (e) {
+            return res.status(500).send({message: 'Could not get user'})
+        }
+
+        try {
+            user.confirmed = true
+            await UserService.update(user)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not update user'})
+        }
+
+        try {
+            await TokenService.deleteByToken(token.token)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not delete token'})
+        }
+
+        res.send(UserService.getUserResponse(user))
     }
 
     static async passwordReset(req: express.Request, res: express.Response) {

@@ -21,6 +21,18 @@ export class UserService {
         return await this.userRepository.save(user)
     }
 
+    static async update(user: User) {
+        return await this.userRepository.update({id: user.id}, user)
+    }
+
+    static async getByEmail(email: string) {
+        return await this.userRepository.findOne({where: {email}})
+    }
+
+    static async getById(id: number) {
+        return await this.userRepository.findOne({where: {id}})
+    }
+
     static getUserResponse(user: Partial<User>) {
         return plainToInstance(User, user, {excludeExtraneousValues: true})
     }
