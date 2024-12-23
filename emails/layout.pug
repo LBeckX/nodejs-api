@@ -1,0 +1,25 @@
+doctype html
+html(lang="de")
+    head
+        block head
+            meta(charset="utf-8")
+            meta(name="viewport", content="width=device-width, initial-scale=1.0")
+            meta(http-equiv="X-UA-Compatible", content="IE=edge")
+            meta(name="x-apple-disable-message-reformatting")
+            link(rel="stylesheet", href="style.css", data-inline)
+    body
+        table(style='width:100%', border='0', cellspacing='0', cellpadding="0", class='main')
+            tr
+                td(align="center")
+                    table(class="container", border='0', cellspacing='0', cellpadding="0")
+                        tr
+                            td
+                                table
+                                    tr
+                                        td(class="content")
+                                            block body
+                                    tr
+                                        td(class="footer-content")
+                                            footer
+                                                block footer
+                                                    include footer

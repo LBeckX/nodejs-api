@@ -1,0 +1,14 @@
+extends ../layout
+
+block body
+    - var link = returnUrl + '?token=' + token;
+    h3 Willkommen #{email},
+
+    p
+        | bitte schließe Deine Registrierung ab.
+        | Klicke auf den folgenden Link um Deine Registrierung abzuschließen und um Deine E-Mail-Adresse zu bestätigen:
+
+    p
+        a(href=link) #{link}
+
+    p Sollte der Link nicht mehr funktionieren, probiere bitte Deine Registrierung erneut.

@@ -47,3 +47,6 @@
 - [ ] Registrierung Controller
 - [ ] Anmeldung Controller
 - [ ] Passwort zurücksetzen Controller
+- [ ] Token Entity erstellen
+    - [ ] Gültigkeit des Tokens auf bspw. 30 Minuten limitieren
+- [x] Token Service erstellen

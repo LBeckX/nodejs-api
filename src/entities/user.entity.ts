@@ -1,5 +1,6 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Expose} from "class-transformer";
+import {databaseConfig} from "../configs/database.config.js";
 
 @Entity()
 export class User {
@@ -28,4 +29,9 @@ export class User {
     @Expose()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    static async getByEmail(email: string) {
+        const userRepository = databaseConfig.getRepository(User)
+        return await userRepository.findOne({where: {email}})
+    }
 }

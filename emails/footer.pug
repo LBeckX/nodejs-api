@@ -1,0 +1,25 @@
+- var companyName = 'LB Industries'
+- var imprintLink = 'http://www.lb-industries.com/imprint'
+- var privacyLink = 'http://www.lb-industries.com/privacy'
+- var agbLink = 'http://www.lb-industries.com/agb'
+
+p Freundliche Grüße
+
+if companyName
+    p Dein Team von #{companyName}
+
+p Falls Du diese E-Mail fälschlicher Weise bekommen hast oder nicht für Dich bestimmt ist, lösch diese bitte.
+
+table(class="footer")
+    tr
+        if imprintLink
+            td
+                a(href=imprintLink) Impressum
+
+        if privacyLink
+            td
+                a(href=privacyLink) Datenschutz
+
+        if agbLink
+            td
+                a(href=agbLink) AGB
