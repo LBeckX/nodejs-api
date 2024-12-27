@@ -44,8 +44,14 @@
     - [ ] middleware (Berechtigungen prüfen nach der Authentifizierung)
 - [x] Einrichtung von Docker und Datenbank
     - [x] docker-compose.yml
-- [ ] Registrierung Controller
-- [ ] Anmeldung Controller
+- [x] Registrierung Controller
+- [x] Resend Registration Mail Controller
+- [x] Registration Confirmation Controller
+- [x] Anmeldung Controller
+    - [x] Existiert der User mit den Anmeldeinformationen und hat seine E-Mail-Adresse bestätigt?
+    - [x] Ja, dann Token erstellen und zurückgeben
+    - [x] Nein, Fehlermeldung zurückgeben
+    - [x] Überprüfung der Anmeldeinformationen mit maximalen Versuchen und Banndauer von einer Minute
 - [ ] Passwort zurücksetzen Controller
 - [ ] Token Entity erstellen
     - [ ] Gültigkeit des Tokens auf bspw. 30 Minuten limitieren

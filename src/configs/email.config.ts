@@ -1,5 +1,3 @@
-import "./dotenv.config.js";
-
 export const emailConfig = {
     debug: Boolean(process.env.SMTP_DEBUG ? parseInt(process.env.SMTP_DEBUG) : 1),
     from: process.env.SMTP_FROM || 'no-reply@mail.com',

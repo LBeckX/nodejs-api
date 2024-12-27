@@ -8,10 +8,74 @@ import {RegisterDto} from "../dto/auth/register.dto.js";
 import {Token} from "../entities/token.entity.js";
 import {TokenService} from "../services/token.service.js";
 import {ResentRegisterMailDto} from "../dto/auth/resent-register-mail.dto.js";
+import {LoginDto} from "../dto/auth/login.dto.js";
+import {comparePassword} from "../utils/password.utils.js";
+import {generateToken} from "../utils/jwt.utils.js";
+import {appConfig} from "../configs/app.config.js";
 
 export class AuthController {
     static async login(req: express.Request, res: express.Response): Promise<any> {
-        res.send('login')
+        const loginDto: LoginDto = plainToInstance(LoginDto, req.body, {excludeExtraneousValues: true});
+
+        try {
+            await validateOrReject(loginDto)
+        } catch (e) {
+            return res.status(401).send({message: 'Unauthorized'})
+        }
+
+        let user: User;
+        try {
+            user = await UserService.getByEmail(loginDto.email)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not check email'})
+        }
+
+        if (!user || !user.confirmed) {
+            return res.status(401).send({message: 'Unauthorized'})
+        }
+
+        if (user.bannedUntil && user.bannedUntil > new Date()) {
+            return res.status(401).send({message: 'Unauthorized', bannedUntil: user.bannedUntil})
+        } else if (user.bannedUntil && user.bannedUntil <= new Date()) {
+            user.bannedUntil = null
+            user.loginAttempts = 0
+
+            try {
+                await UserService.update(user)
+            } catch (e) {
+                return res.status(500).send({message: 'Could not update user'})
+            }
+        }
+
+        if (!(await comparePassword(user.password, loginDto.password))) {
+            user.loginAttempts++
+            if (user.loginAttempts >= appConfig.maxLoginAttempts) {
+                user.bannedUntil = new Date(Date.now() + appConfig.banTime)
+            }
+
+            try {
+                await UserService.update(user)
+            } catch (e) {
+                return res.status(500).send({message: 'Could not update user'})
+            }
+
+            return res.status(401).send({
+                message: 'Unauthorized',
+                bannedUntil: user.bannedUntil,
+                loginAttempts: appConfig.maxLoginAttempts - user.loginAttempts
+            })
+        }
+
+        try {
+            user.loginAttempts = 0
+            await UserService.update(user)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not update user'})
+        }
+
+        const jwt = generateToken({id: user.id, email: user.email, role: user.role})
+
+        return res.send(jwt)
     }
 
     static async register(req: express.Request, res: express.Response): Promise<any> {

@@ -1,5 +1,4 @@
 import {DataSource} from "typeorm";
-import './dotenv.config.js'
 import Entities from '../entities/index.js';
 
 export const databaseConfig = new DataSource({
