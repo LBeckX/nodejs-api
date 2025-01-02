@@ -30,7 +30,11 @@ export class UserService {
     }
 
     static async getById(id: number) {
-        return await this.userRepository.findOne({where: {id}})
+        const user = await this.userRepository.findOne({where: {id}})
+        if (!user) {
+            throw new Error('User not found')
+        }
+        return user
     }
 
     static getUserResponse(user: Partial<User>) {

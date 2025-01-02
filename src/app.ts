@@ -8,6 +8,7 @@ import {databaseConfig} from "./configs/database.config.js";
 import {plainToInstance} from "class-transformer";
 import {EnvDto} from "./dto/env.dto.js";
 import {validateOrReject} from "class-validator";
+import {needAuth} from "./middlewares/auth.middleware.js";
 
 const expressService = new ExpressService();
 
@@ -30,7 +31,7 @@ try {
 
 expressService.app.use('/api/v1/auth', authRoutes);
 
-expressService.app.use('/api/v1/user', userRouter);
+expressService.app.use('/api/v1/user', needAuth, userRouter);
 
 expressService.app.get('/ping', (req, res) => {
     console.log('ping/pong');
