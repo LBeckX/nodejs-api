@@ -30,7 +30,6 @@ try {
 }
 
 expressService.app.use('/api/v1/auth', authRoutes);
-
 expressService.app.use('/api/v1/user', needAuth, userRouter);
 
 expressService.app.get('/ping', (req, res) => {

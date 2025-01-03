@@ -38,10 +38,10 @@
 - [x] Einrichtung von environment Variablen
     - [x] dotenv
     - [x] .env
-- [ ] Einrichtung von Express
+- [x] Einrichtung von Express
     - [x] app.ts
     - [x] routes (/ping, /api/v1/auth/login, /api/v1/auth/register, /api/v1/auth/reset-password, /api/v1/user)
-    - [ ] middleware (Berechtigungen prüfen nach der Authentifizierung)
+  - [x] middleware (Berechtigungen prüfen nach der Authentifizierung)
 - [x] Einrichtung von Docker und Datenbank
     - [x] docker-compose.yml
 - [x] Registrierung Controller
@@ -52,7 +52,9 @@
     - [x] Ja, dann Token erstellen und zurückgeben
     - [x] Nein, Fehlermeldung zurückgeben
     - [x] Überprüfung der Anmeldeinformationen mit maximalen Versuchen und Banndauer von einer Minute
-- [ ] Passwort zurücksetzen Controller
-- [ ] Token Entity erstellen
-    - [ ] Gültigkeit des Tokens auf bspw. 30 Minuten limitieren
+- [x] Passwort zurücksetzen Controller
+- [x] Token Entity erstellen
+    - [x] Gültigkeit des Tokens auf bspw. 30 Minuten limitieren
 - [x] Token Service erstellen
+- [x] Create CRUD User Controller
+- [ ] Deploy the whole API on a Hetzner server

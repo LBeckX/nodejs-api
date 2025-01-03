@@ -37,7 +37,15 @@ export class UserService {
         return user
     }
 
-    static getUserResponse(user: Partial<User>) {
+    static async getAll() {
+        return await this.userRepository.find()
+    }
+
+    static async delete(id: number) {
+        return await this.userRepository.delete({id})
+    }
+
+    static getUserResponse(user: Partial<User> | Partial<User>[]) {
         return plainToInstance(User, user, {excludeExtraneousValues: true})
     }
 }
