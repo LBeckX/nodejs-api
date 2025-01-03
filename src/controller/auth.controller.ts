@@ -9,9 +9,10 @@ import {Token} from "../entities/token.entity.js";
 import {TokenService} from "../services/token.service.js";
 import {ResentRegisterMailDto} from "../dto/auth/resent-register-mail.dto.js";
 import {LoginDto} from "../dto/auth/login.dto.js";
-import {comparePassword} from "../utils/password.utils.js";
+import {comparePassword, hashPassword} from "../utils/password.utils.js";
 import {generateToken} from "../utils/jwt.utils.js";
 import {appConfig} from "../configs/app.config.js";
+import {PasswordResetConfirmationDto, PasswordResetDto} from "../dto/auth/password-reset.dto.js";
 
 export class AuthController {
     static async login(req: express.Request, res: express.Response): Promise<any> {
@@ -108,7 +109,7 @@ export class AuthController {
 
         let token: Token;
         try {
-            token = await TokenService.create('register', user.id.toString(), 8)
+            token = await TokenService.create({name: 'register', value: user.id.toString()})
         } catch (e) {
             return res.status(500).send({message: 'Could not create token'})
         }
@@ -152,7 +153,7 @@ export class AuthController {
 
         let token: Token;
         try {
-            token = await TokenService.create('register', user.id.toString(), 8)
+            token = await TokenService.create({name: 'register', value: user.id.toString()})
         } catch (e) {
             return res.status(500).send({message: 'Could not create token'})
         }
@@ -212,10 +213,80 @@ export class AuthController {
     }
 
     static async passwordReset(req: express.Request, res: express.Response): Promise<any> {
-        res.send('passwordForgotten')
+        const passwordResetDto = plainToInstance(PasswordResetDto, req.body, {excludeExtraneousValues: true});
+
+        try {
+            await validateOrReject(passwordResetDto)
+        } catch (e) {
+            return res.status(400).send(e)
+        }
+
+        let user: User;
+        try {
+            user = await UserService.getByEmail(passwordResetDto.email)
+            if (!user || !user.confirmed) {
+                return res.status(404).send({message: 'User not found'})
+            }
+        } catch (e) {
+            return res.status(500).send({message: 'Could not get user'})
+        }
+
+        let token: Token;
+        try {
+            token = await TokenService.create({name: 'passwordReset', value: user.id.toString()})
+        } catch (e) {
+            return res.status(500).send({message: 'Could not create token'})
+        }
+
+        try {
+            await EmailService.sendPasswordReset({
+                token: token.token,
+                returnUrl: passwordResetDto.returnUrl,
+                email: user.email
+            })
+        } catch (e) {
+            return res.status(500).send({message: 'Could not send password reset email'})
+        }
+
+        res.send(UserService.getUserResponse(user))
     }
 
     static async passwordResetConfirmation(req: express.Request, res: express.Response): Promise<any> {
-        res.send('passwordForgottenConfirmation')
+        const passwordResetConfirmationDto = plainToInstance(PasswordResetConfirmationDto, req.body, {excludeExtraneousValues: true});
+
+        try {
+            await validateOrReject(passwordResetConfirmationDto)
+        } catch (e) {
+            return res.status(400).send(e)
+        }
+
+        let token: Token
+        try {
+            token = await TokenService.getByToken(passwordResetConfirmationDto.token)
+            if (!token) {
+                return res.status(404).send({message: 'Token not found'})
+            }
+        } catch (e) {
+            return res.status(500).send({message: 'Could not get token'})
+        }
+
+        let user: User
+        try {
+            user = await UserService.getById(parseInt(token.value))
+            if (!user) {
+                return res.status(404).send({message: 'User not found'})
+            }
+        } catch (e) {
+            return res.status(500).send({message: 'Could not get user'})
+        }
+
+        try {
+            user.password = await hashPassword(passwordResetConfirmationDto.password)
+            await UserService.update(user)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not update user'})
+        }
+
+        res.send(UserService.getUserResponse(user))
     }
 }

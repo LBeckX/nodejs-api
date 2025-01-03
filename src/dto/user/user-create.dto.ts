@@ -1,11 +1,7 @@
 import {IsEmail, IsStrongPassword} from "class-validator";
 import {Expose} from "class-transformer";
 
-export class UserCreateDto {
-    @IsEmail()
-    @Expose()
-    email: string;
-
+export class UserPasswordDto {
     @IsStrongPassword({
         minSymbols: 1,
         minNumbers: 1,
@@ -15,4 +11,10 @@ export class UserCreateDto {
     })
     @Expose()
     password: string;
+}
+
+export class UserCreateDto extends UserPasswordDto {
+    @IsEmail()
+    @Expose()
+    email: string;
 }

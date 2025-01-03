@@ -1,5 +1,13 @@
 import {databaseConfig} from "../configs/database.config.js";
 import {Token} from "../entities/token.entity.js";
+import * as dateFns from 'date-fns'
+
+type CreateTokenDto = {
+    name?: string,
+    value: string,
+    length?: number,
+    validUntil?: Date
+}
 
 export class TokenService {
 
@@ -14,19 +22,26 @@ export class TokenService {
         return token;
     }
 
-    static async create(name: string, value: string, length: number = 32) {
+    static async create({name = '', value, length = 16, validUntil}: CreateTokenDto) {
         const token = new Token()
         token.name = name
         token.token = this.generateToken(length)
         token.value = value
+        if (validUntil) {
+            token.validUntil = validUntil
+        }
         return await this.tokenRepository.save(token)
     }
 
-    static async getByToken(token: string) {
-        return await this.tokenRepository.findOne({where: {token}})
+    static async getByToken(tokenStr: string) {
+        const token = await this.tokenRepository.findOne({where: {token: tokenStr}})
+        if (dateFns.isBefore(new Date(), token.validUntil)) {
+            return null
+        }
+        return token
     }
 
-    static async deleteByToken(token: string) {
-        return await this.tokenRepository.delete({token})
+    static async deleteByToken(tokenStr: string) {
+        return await this.tokenRepository.delete({token: tokenStr})
     }
 }

@@ -1,0 +1,14 @@
+extends ../layout
+
+block body
+    - var link = returnUrl + '?token=' + token;
+
+    h3 Hi #{email},
+
+    p
+        | bitte klicke auf den folgenden Link um Dein Passwort zurückzusetzen:
+
+    p
+        a(href=link) #{link}
+
+    p Sollte der Link nicht mehr funktionieren, probiere bitte Deinen Passwort Reset erneut.

@@ -59,4 +59,18 @@ export class EmailService {
             locals: args,
         })
     }
+
+    static async sendPasswordReset(args: {
+        email: string,
+        returnUrl: string,
+        token: string
+    }) {
+        return EmailService.email.send({
+            template: 'passwordReset',
+            message: {
+                to: args.email
+            },
+            locals: args,
+        })
+    }
 }
