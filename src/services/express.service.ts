@@ -17,7 +17,7 @@ export class ExpressService {
 
         this.app.use((req, res, next) => {
             console.log(`Request: ${req.method} ${req.url}`, req.body, req.params, req.query);
-            next();
+            return next();
         });
     }
 

@@ -29,10 +29,6 @@ try {
     process.exit(1)
 }
 
-expressService.app.use(() => {
-
-});
-
 expressService.app.use('/api/v1/auth', authRoutes);
 expressService.app.use('/api/v1/user', needAuth, userRouter);
 
