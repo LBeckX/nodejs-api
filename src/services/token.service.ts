@@ -36,6 +36,7 @@ export class TokenService {
     static async getByToken(tokenStr: string) {
         const token = await this.tokenRepository.findOne({where: {token: tokenStr}})
         if (dateFns.isBefore(new Date(), token.validUntil)) {
+            console.log('Token expired')
             return null
         }
         return token

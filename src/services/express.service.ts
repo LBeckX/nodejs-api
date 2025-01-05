@@ -14,6 +14,11 @@ export class ExpressService {
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
         this.app.use(cors())
+
+        this.app.use((req, res, next) => {
+            console.log(`Request: ${req.method} ${req.url}`, req.body, req.params, req.query);
+            next();
+        });
     }
 
     public start(port: number) {
