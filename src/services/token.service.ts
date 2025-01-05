@@ -27,16 +27,14 @@ export class TokenService {
         token.name = name
         token.token = this.generateToken(length)
         token.value = value
-        if (validUntil) {
-            token.validUntil = validUntil
-        }
+        token.validUntil = validUntil ? validUntil : dateFns.addHours(new Date(), 1)
         return await this.tokenRepository.save(token)
     }
 
     static async getByToken(tokenStr: string) {
         const token = await this.tokenRepository.findOne({where: {token: tokenStr}})
-        if (dateFns.isBefore(new Date(), token.validUntil)) {
-            console.log('Token expired', token)
+        if (dateFns.isBefore(token.validUntil, new Date())) {
+            console.log('Token expired', token, new Date())
             return null
         }
         return token

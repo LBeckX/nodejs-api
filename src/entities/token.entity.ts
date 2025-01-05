@@ -1,6 +1,5 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Expose} from "class-transformer";
-import * as dateFns from 'date-fns';
 
 @Entity()
 export class Token {
@@ -21,7 +20,7 @@ export class Token {
     value: string;
 
     @Expose()
-    @Column({type: 'timestamp', default: dateFns.addHours(new Date(), 1)})
+    @Column({type: 'timestamp', nullable: true})
     validUntil: Date;
 
     @Expose()
