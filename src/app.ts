@@ -9,6 +9,8 @@ import {plainToInstance} from "class-transformer";
 import {EnvDto} from "./dto/env.dto.js";
 import {validateOrReject} from "class-validator";
 import {needAuth} from "./middlewares/auth.middleware.js";
+import express from "express";
+import {rootPath} from "./configs/path.config.js";
 
 const expressService = new ExpressService();
 
@@ -28,6 +30,9 @@ try {
     console.error(e)
     process.exit(1)
 }
+
+// Static file access
+expressService.app.use('/api/v1/files', express.static(`${rootPath}/files`))
 
 expressService.app.use('/api/v1/auth', authRoutes);
 expressService.app.use('/api/v1/user', needAuth, userRouter);

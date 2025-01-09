@@ -5,8 +5,10 @@ import {plainToInstance} from "class-transformer";
 import {validateOrReject} from "class-validator";
 import {UserCreateDto, UserUpdateDto} from "../dto/user/user-create.dto.js";
 import {User} from "../entities/user.entity.js";
+import {File} from "../entities/file.entity.js";
 import {hashPassword} from "../utils/password.utils.js";
 import {removeUndefinedVal} from "../utils/form-data.utils.js";
+import {FileService} from "../services/file.service.js";
 
 export class UserController {
     static async getUsers(req: ExpressUserRequest, res: express.Response): Promise<any> {
@@ -104,6 +106,50 @@ export class UserController {
     }
 
     static async me(req: ExpressUserRequest, res: express.Response): Promise<any> {
+        return res.send(UserService.getUserResponse(req.user))
+    }
+
+    static async avatarUpload(req: ExpressUserRequest, res: express.Response): Promise<any> {
+        if (!req.file) {
+            return res.status(400).send({message: 'Avatar not uploaded'})
+        }
+
+        let file: File
+        try {
+            file = new File()
+            file.path = req.file.path
+            file.name = req.file.filename
+            file.ready = true
+            await FileService.save(file)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not create file'})
+        }
+
+        try {
+            req.user.avatar = file
+            await UserService.update(req.user)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not update user'})
+        }
+
+        return res.send(UserService.getUserResponse(req.user))
+    }
+
+    static async avatarDelete(req: ExpressUserRequest, res: express.Response): Promise<any> {
+        if (!req.user.avatar) {
+            return res.status(404).send({message: 'Avatar not found'})
+        }
+
+        try {
+            const avatarId = req.user.avatar.id
+            await FileService.deleteFile(req.user.avatar)
+            req.user.avatar = null
+            await UserService.update(req.user)
+            await FileService.delete(avatarId)
+        } catch (e) {
+            return res.status(500).send({message: 'Could not delete avatar'})
+        }
+
         return res.send(UserService.getUserResponse(req.user))
     }
 }

@@ -1,5 +1,14 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import {Expose} from "class-transformer";
+import {File} from './file.entity.js'
 
 @Entity()
 export class User {
@@ -26,6 +35,11 @@ export class User {
 
     @Column({type: 'smallint', default: 0})
     loginAttempts: number;
+
+    @Expose()
+    @OneToOne(() => File, {nullable: true, eager: true})
+    @JoinColumn()
+    avatar: File;
 
     @Expose()
     @CreateDateColumn()
